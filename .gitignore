@@ -1,0 +1,16 @@
+# IDE
+.vscode/
+.idea/
+
+# Build files
+embedded/*.hex
+embedded/*.bin
+embedded/build/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Credentials (if you create a secrets file)
+**/secrets.h
+**/credentials.h

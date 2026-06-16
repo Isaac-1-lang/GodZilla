@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Godzilla - Temperature Monitor</title>
+    <script src="https://cdn.jsdelivr.net/npm/paho-mqtt@1.1.0/paho-mqtt.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .candidate {
+            text-align: center;
+            color: #666;
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+        
+        .status {
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        
+        .status.connected {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status.disconnected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .temp-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .temp-value {
+            font-size: 72px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        
+        .temp-label {
+            font-size: 24px;
+            opacity: 0.9;
+        }
+        
+        .last-update {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🦖 Godzilla Temperature Monitor</h1>
+        <div class="candidate">Candidate: NIYOBYOSE Isaac Precieux</div>
+        
+        <div id="status" class="status disconnected">
+            Disconnected
+        </div>
+        
+        <div class="temp-display">
+            <div class="temp-label">Current Temperature</div>
+            <div class="temp-value" id="temperature">--</div>
+            <div class="temp-label">°C</div>
+        </div>
+        
+        <div class="last-update">
+            Last update: <span id="lastUpdate">Never</span>
+        </div>
+    </div>
+
+    <script>
+        // MQTT Configuration - Update these values
+        const MQTT_BROKER = "157.173.101.159";
+        const MQTT_PORT = 9001; // WebSocket port
+        const MQTT_TOPIC = "godzilla/temperature";
+        
+        const client = new Paho.Client(MQTT_BROKER, MQTT_PORT, "web_" + Math.random().toString(16).substr(2, 8));
+        
+        client.onConnectionLost = (responseObject) => {
+            console.log("Connection lost:", responseObject.errorMessage);
+            updateStatus(false);
+        };
+        
+        client.onMessageArrived = (message) => {
+            console.log("Message received:", message.payloadString);
+            try {
+                const data = JSON.parse(message.payloadString);
+                updateTemperature(data.temperature);
+            } catch (e) {
+                console.error("Error parsing message:", e);
+            }
+        };
+        
+        function connectMQTT() {
+            client.connect({
+                onSuccess: () => {
+                    console.log("Connected to MQTT broker");
+                    updateStatus(true);
+                    client.subscribe(MQTT_TOPIC);
+                },
+                onFailure: (error) => {
+                    console.error("Connection failed:", error);
+                    updateStatus(false);
+                    setTimeout(connectMQTT, 5000);
+                }
+            });
+        }
+        
+        function updateStatus(connected) {
+            const statusEl = document.getElementById('status');
+            if (connected) {
+                statusEl.textContent = 'Connected';
+                statusEl.className = 'status connected';
+            } else {
+                statusEl.textContent = 'Disconnected';
+                statusEl.className = 'status disconnected';
+            }
+        }
+        
+        function updateTemperature(temp) {
+            document.getElementById('temperature').textContent = temp.toFixed(1);
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+        }
+        
+        // Connect on page load
+        connectMQTT();
+    </script>
+</body>
+</html>
