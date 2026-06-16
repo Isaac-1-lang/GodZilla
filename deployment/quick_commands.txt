@@ -1,0 +1,73 @@
+================================================================
+GODZILLA VPS QUICK REFERENCE COMMANDS
+================================================================
+
+CONNECTION:
+-----------
+ssh emg32@157.173.101.159 -p 24032
+Password: emg32
+
+
+UPLOAD FILES (Run from your local computer):
+--------------------------------------------
+scp -P 24032 web/dashboard.html emg32@157.173.101.159:/home/emg32/godzilla/web/
+scp -P 24032 mqtt_bridge/*.py emg32@157.173.101.159:/home/emg32/godzilla/mqtt_bridge/
+
+
+ON VPS - SETUP:
+---------------
+mkdir -p ~/godzilla/web ~/godzilla/mqtt_bridge
+cd ~/godzilla/mqtt_bridge
+pip3 install -r requirements.txt
+
+
+START WEB SERVER:
+-----------------
+cd ~/godzilla/web
+python3 -m http.server 8080
+# Access: http://157.173.101.159:8080/dashboard.html
+
+
+START MQTT BRIDGE (if running locally):
+---------------------------------------
+cd ~/godzilla/mqtt_bridge
+python3 serial_to_mqtt.py
+
+
+RUN IN BACKGROUND:
+------------------
+screen -S godzilla
+cd ~/godzilla/mqtt_bridge
+python3 serial_to_mqtt.py
+# Press Ctrl+A then D to detach
+# Reattach: screen -r godzilla
+
+
+CHECK MOSQUITTO STATUS:
+-----------------------
+sudo systemctl status mosquitto
+
+
+TEST MQTT:
+----------
+# Subscribe
+mosquitto_sub -h 157.173.101.159 -t "godzilla/temperature"
+
+# Publish test
+mosquitto_pub -h 157.173.101.159 -t "godzilla/temperature" -m '{"temperature":25.5,"candidate":"NIYOBYOSE Isaac Precieux"}'
+
+
+STOP SERVICES:
+--------------
+# Stop web server: Ctrl+C
+# Stop MQTT bridge: Ctrl+C
+# Exit screen: Ctrl+A then K
+
+
+VIEW LOGS:
+----------
+tail -f ~/godzilla/mqtt_bridge/mqtt.log
+sudo journalctl -u mosquitto -f
+
+
+================================================================

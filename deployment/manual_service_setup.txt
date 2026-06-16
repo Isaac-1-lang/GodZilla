@@ -1,0 +1,80 @@
+================================================================
+MANUAL SETUP - Make Web Server Run Forever
+================================================================
+
+Run these commands on the VPS (after connecting via SSH):
+
+STEP 1: Create the service file
+--------------------------------
+sudo nano /etc/systemd/system/godzilla-web.service
+
+Paste this content:
+-------------------
+[Unit]
+Description=Godzilla Temperature Dashboard
+After=network.target
+
+[Service]
+Type=simple
+User=emg32
+WorkingDirectory=/home/emg32/godzilla/web
+ExecStart=/usr/bin/python3 -m http.server 8083
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+-------------------
+
+Save: Ctrl+O, Enter, Ctrl+X
+
+
+STEP 2: Enable and start the service
+-------------------------------------
+sudo systemctl daemon-reload
+sudo systemctl enable godzilla-web.service
+sudo systemctl start godzilla-web.service
+
+
+STEP 3: Check if running
+-------------------------
+sudo systemctl status godzilla-web.service
+
+You should see: "Active: active (running)"
+
+
+================================================================
+USEFUL COMMANDS
+================================================================
+
+Check status:
+  sudo systemctl status godzilla-web
+
+Stop service:
+  sudo systemctl stop godzilla-web
+
+Start service:
+  sudo systemctl start godzilla-web
+
+Restart service:
+  sudo systemctl restart godzilla-web
+
+View live logs:
+  sudo journalctl -u godzilla-web -f
+
+View recent logs:
+  sudo journalctl -u godzilla-web --no-pager
+
+Disable service (won't start on boot):
+  sudo systemctl disable godzilla-web
+
+================================================================
+
+Dashboard URL: http://157.173.101.159:8083/dashboard.html
+
+The service will:
+✓ Start automatically when VPS boots
+✓ Restart if it crashes
+✓ Keep running even after you close SSH
+
+================================================================

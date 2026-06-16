@@ -145,6 +145,26 @@ This sends fake temperature data to test if the broker is working.
 mosquitto_sub -h 157.173.101.159 -p 1883 -t "godzilla/temperature"
 ```
 
+## Deployment to VPS
+
+See [deployment/DEPLOY_README.md](deployment/DEPLOY_README.md) for complete VPS deployment guide.
+
+**Quick Deploy:**
+```bash
+cd deployment
+# Windows:
+deploy_windows.bat
+
+# Linux/Mac:
+./deploy.sh
+```
+
+**VPS Details:**
+- Host: 157.173.101.159
+- User: emg32
+- Port: 24032
+- Dashboard URL: http://157.173.101.159:8080/dashboard.html
+
 ## Quick Start
 
 **New to the project?** See [INSTALLATION.md](INSTALLATION.md) for complete step-by-step setup instructions.
