@@ -117,6 +117,38 @@ An embedded temperature sensor project that reads temperature values, displays t
 - **WebSocket Port**: 9001 (for web dashboard)
 - **Topic**: godzilla/temperature
 
+## Testing & Verification
+
+### Check if data is being sent to broker
+
+**Method 1: Using Test Subscriber Script**
+```bash
+cd mqtt_bridge
+python test_mqtt_subscriber.py
+```
+This will show all messages being published to the broker in real-time.
+
+**Method 2: Using Test Publisher Script**
+```bash
+cd mqtt_bridge
+python test_mqtt_publisher.py
+```
+This sends fake temperature data to test if the broker is working.
+
+**Method 3: Using MQTT Explorer (GUI Tool)**
+- Download MQTT Explorer: http://mqtt-explorer.com/
+- Connect to: 157.173.101.159:1883
+- Subscribe to topic: godzilla/temperature
+
+**Method 4: Using mosquitto_sub command**
+```bash
+mosquitto_sub -h 157.173.101.159 -p 1883 -t "godzilla/temperature"
+```
+
+## Quick Start
+
+**New to the project?** See [INSTALLATION.md](INSTALLATION.md) for complete step-by-step setup instructions.
+
 ### Installation Steps
 
 1. **Arduino Uno Setup:**

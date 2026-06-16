@@ -11,7 +11,7 @@ import time
 import sys
 
 # Configuration
-SERIAL_PORT = 'COM3'  # Change to your Arduino port (COM3, COM4 on Windows, /dev/ttyUSB0 on Linux)
+SERIAL_PORT = 'COM14'  # Change to your Arduino port (COM3, COM4 on Windows, /dev/ttyUSB0 on Linux)
 BAUD_RATE = 9600
 MQTT_BROKER = '157.173.101.159'
 MQTT_PORT = 1883
