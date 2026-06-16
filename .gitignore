@@ -1,5 +1,4 @@
 # IDE
-.vscode/
 .idea/
 
 # Build files
@@ -14,3 +13,5 @@ Thumbs.db
 # Credentials (if you create a secrets file)
 **/secrets.h
 **/credentials.h
+config.bat
+node_modules
